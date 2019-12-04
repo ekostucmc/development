@@ -1,0 +1,896 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+   
+<!-- ============================================================
+	
+	Kapazitaetsabgleich - Hier können die Bedarfsinformationen 
+	der in Abgleiche eingebundenen Teile betrachtet und alle 
+	notwendigen Angaben hinsichtlich Kapazität eingetragen 
+	werden.
+	
+	All Rights reserved 
+	Copyright Volkswagen AG 2009
+  							
+	Author Nicolas Marochow, Auel EDV-Beratung GmbH
+	Since release 1.0	
+	
+============================================================= -->   
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:c="http://java.sun.com/jstl/core"
+	  xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:ui="http://java.sun.com/jsf/facelets"
+	  xmlns:p="http://primefaces.org/ui"
+	  xmlns:inca="http://vwg.vw/inca">     
+<h:body>
+
+<!-- 
+	Alles was oberhalb des ui:composition Tags angegeben ist
+	wird ignoriert.
+ -->
+
+<ui:composition template="/WEB-INF/facelets/template.xhtml">
+
+<ui:param name="title" value="#{empty bkaHandler.model.teileGruppe ? '' : bkaHandler.model.teileGruppeAsString}" />
+<ui:param name="subtitle" value="#{empty bkaHandler.model.teileGruppe ? '' : bkaHandler.model.teileGruppeAsString}#{empty bkaHandler.model.teileGruppe and empty bkaHandler.model.teileGruppe.name ? '' : ' - '}#{empty bkaHandler.model.teileGruppe.name ? '' : bkaHandler.model.teileGruppe.name}" />
+
+<ui:define name="popupFenster">
+	<c:if test="#{feintuningHandler.anzeigeFeintuningAktiv}">
+		<h:panelGroup rendered="#{feintuningHandler.anzeigeFeintuningAktiv}">
+			<ui:include src="/WEB-INF/facelets/Feintuning.xhtml"/>
+		</h:panelGroup>
+	</c:if>
+	<c:if test="#{feintuningNpHandler.anzeigeFeintuningNpAktiv}">
+		<h:panelGroup rendered="#{feintuningNpHandler.anzeigeFeintuningNpAktiv}">
+			<ui:include src="/WEB-INF/facelets/FeintuningNP.xhtml"/>
+		</h:panelGroup>
+	</c:if>
+	<h:panelGroup rendered="#{anzeigeOptionenHandler.anzeigeOptionenBoxAktiv}">
+		<ui:include src="/WEB-INF/facelets/AnzeigeOptionen.xhtml"/>
+	</h:panelGroup>
+	<h:panelGroup rendered="#{notizenHandler.notizenBoxAktiv}">
+		<ui:include src="/WEB-INF/facelets/NotizenBox.xhtml"/>	
+	</h:panelGroup>
+	<h:panelGroup rendered="#{ansprechpartnerHandler.ansprechpartnerBoxAktiv}">
+ 		<ui:include src="/WEB-INF/facelets/Ansprechpartner.xhtml"/>	
+	</h:panelGroup>
+	<h:panelGroup rendered="#{ansprechpartnerHandler.ansprechpartnerTnrBoxAktiv}">
+		<ui:include src="/WEB-INF/facelets/AnsprechpartnerTnr.xhtml" />	
+	</h:panelGroup>
+	<h:panelGroup rendered="#{bkaHandler.bkaFreigabeAktiv}">
+ 		<ui:include src="/WEB-INF/facelets/BkaFreigebenBox.xhtml"/>	
+	</h:panelGroup>
+	<h:panelGroup rendered="#{bkaHandler.bkaLoeschenAktiv}">
+ 		<ui:include src="/WEB-INF/facelets/BkaLoeschenBox.xhtml"/>	
+	</h:panelGroup>
+	<h:panelGroup rendered="#{bkaHandler.bkaUmbenennenAktiv}">
+ 		<ui:include src="/WEB-INF/facelets/BkaUmbenennenBox.xhtml"/>	
+	</h:panelGroup>
+	<h:panelGroup rendered="#{bkaHandler.weitereVerwSzenarioWechselAktiv}">
+		<ui:include src="/WEB-INF/facelets/WeitereVerwSzenarioWechsel.xhtml"/>
+	</h:panelGroup>
+	<h:panelGroup rendered="#{datenaktualisierungHandler.aktualisierungBoxAktiv}">
+		<ui:include src="/WEB-INF/facelets/DatenaktualisierungBox.xhtml"/>
+	</h:panelGroup>
+	<h:panelGroup rendered="#{datenaktualisierungHandler.anforderungErfolgreichBoxAktiv}">
+		<ui:include src="/WEB-INF/facelets/AktualisierungAnforderungErfolgreichBox.xhtml"/>
+	</h:panelGroup>
+	<h:panelGroup rendered="#{datenaktualisierungHandler.anforderungFehlgeschlagenBoxAktiv}">
+		<ui:include src="/WEB-INF/facelets/AktualisierungAnforderungFehlgeschlagenBox.xhtml"/>
+	</h:panelGroup>
+	<h:panelGroup rendered="#{kapazitaetHandler.letzterBearbeiterBoxAktiv}">
+ 		<ui:include src="/WEB-INF/facelets/LetzterBearbeiterKapazitaet.xhtml" />	
+	</h:panelGroup>
+	<h:panelGroup rendered="#{bkaHandler.bkaExcelExportAktiv and !sichtHandler.autobkmSicht}">
+ 		<ui:include src="/WEB-INF/facelets/BkaExcelExportBox.xhtml" />	
+	</h:panelGroup>	
+	<h:panelGroup rendered="#{bkaHandler.bkaExcelExportAktiv and sichtHandler.autobkmSicht}">
+ 		<ui:include src="/WEB-INF/facelets/BkaExcelExportInternBox.xhtml" />	
+	</h:panelGroup>
+	<h:panelGroup rendered="#{bkaHandler.exportFlag}">
+		<ui:include src="/WEB-INF/facelets/SucheExportBox.xhtml"/>
+	</h:panelGroup>
+	<h:panelGroup rendered="#{prnBkaHandler.exportBoxAktiv}">
+ 		<ui:include src="/WEB-INF/facelets/BkaExcelExportPrnBox.xhtml" />	
+	</h:panelGroup>
+	<h:panelGroup rendered="#{uvbErklaerungHandler.uvbErklaerungAktiv}">
+		<ui:include src="/WEB-INF/facelets/UvbErklaerungBox.xhtml"/>	
+	</h:panelGroup>
+	<h:panelGroup rendered="#{kapazitaetHandler.kapaHistorieBoxAktiv}">
+ 		<ui:include src="/WEB-INF/facelets/Kapazitaetshistorie.xhtml"/>	
+	</h:panelGroup>
+	<h:panelGroup rendered="#{kreuzabhaengigkeitenHandler.boxAktiv}">
+ 		<ui:include src="/WEB-INF/facelets/Kreuzabhaengigkeiten.xhtml" />	
+	</h:panelGroup>
+	<h:panelGroup rendered="#{abhaengigkeitenHandler.abhaengigkeitBoxAktiv}">
+		<ui:include src="/WEB-INF/facelets/Abhaengigkeiten.xhtml" />
+	</h:panelGroup>
+	<h:panelGroup rendered="#{feintuningHandler.anzeigeLetzterBearbeiterAktiv}"> 
+ 		<ui:include src="/WEB-INF/facelets/LetzterBearbeiterFeintuning.xhtml"/>	
+	</h:panelGroup>
+	<h:panelGroup rendered="#{zeitleistenShiftingHandler.zlsDialogAktiv}">
+		<ui:include src="/WEB-INF/facelets/ZeitleistenShifting.xhtml" />
+	</h:panelGroup>
+	<c:if test="#{prnBkaHandler.uebersetzenBoxAktiv}">
+		<h:panelGroup rendered="#{prnBkaHandler.uebersetzenBoxAktiv}"> 
+	 		<ui:include src="/WEB-INF/facelets/Uebersetzungsabgleich.xhtml"/>	 
+		</h:panelGroup>
+	</c:if>
+	<c:if test="#{uebersetzenAuswahlHandler.uebersetzenAuswahlAktiv}">
+		<h:panelGroup rendered="#{uebersetzenAuswahlHandler.uebersetzenAuswahlAktiv}">
+			<ui:include src="/WEB-INF/facelets/UebersetzenAuswahl.xhtml"/>	
+		</h:panelGroup>
+	</c:if>
+	<h:panelGroup rendered="#{uebersetzenAuswahlHandler.showHinweis}">
+		<ui:include src="/WEB-INF/facelets/UebersetzenHinweisBox.xhtml"/>	 
+	</h:panelGroup>
+	<c:if test="#{einkaeuferorganisationAuswahlHandler.auswahlBoxAktiv}">
+		<h:panelGroup rendered="#{einkaeuferorganisationAuswahlHandler.auswahlBoxAktiv}">
+			<ui:include src="/WEB-INF/facelets/EinkaeuferorganisationAuswahl.xhtml" />
+		</h:panelGroup>
+	</c:if>
+</ui:define>
+
+<ui:define name="boxHeader">
+<ui:include src="/WEB-INF/facelets/KapazitaetsabgleichHeader.xhtml" />
+</ui:define>
+<!--                         -->
+<!-- Statuszeile             -->
+<!--                         -->
+
+<!-- Statuszeile links       -->
+<ui:define name="headerPanelGridSpalte1">
+</ui:define>
+
+<!-- Statuszeile mitte       -->
+<ui:define name="headerPanelGridSpalte2">
+</ui:define>
+
+<!-- Statuszeile rechts      -->
+<ui:define name="headerPanelGridSpalte3">
+</ui:define>
+<ui:define name="menue">
+	<inca:menue name="MenueInaktiv" />
+</ui:define>
+
+<ui:define name="preHeaderContent">
+ <ui:fragment rendered="#{sichtHandler.autobkm}">
+		<ui:include src="/WEB-INF/facelets/DatensichtBasic.xhtml">
+			<ui:param name="parentDatensichtHandler" value="#{bkaHandler}"/>
+		</ui:include>
+		<script type="text/javascript">setDatensichtEinAusblenden('Kapazitaetsabgleich', true);</script>
+	 </ui:fragment>
+</ui:define>
+<ui:define name="body">	
+
+	<!-- ################################# -->
+	<!-- Datensicht einschraenken.         -->
+	<!-- ################################# -->
+
+
+		
+	<!-- Anzeige von Meldungen. -->				
+	<p:messages rendered="#{ !zeitleistenShiftingHandler.zlsDialogAktiv and !ansprechpartnerHandler.ansprechpartnerBoxAktiv and !bkaHandler.bkaLoeschenAktiv and !bkaHandler.bkaFreigabeAktiv and !notizenHandler.notizenBoxAktiv and !anzeigeOptionenHandler.anzeigeOptionenBoxAktiv and !bkaHandler.bkaUmbenennenAktiv and !feintuningHandler.anzeigeFeintuningAktiv and !datenaktualisierungHandler.aktualisierungBoxAktiv}" />
+	<h:form id="meldungenNachladenForm">
+		<p:remoteCommand name="onload" action="#{bkaHandler.onLoad}" autoRun="true" global="false" />
+	</h:form>
+	
+	<div id="kapazitaetsabgleichBody" class="kapazitaetsabgleichBody">
+	
+		<div id="multiLineTooltip"></div>
+			
+		<!-- Notizen -->
+		<ui:include src="/WEB-INF/facelets/Notizen.xhtml"/>
+		
+		<!-- Navigation -->
+		<ui:include src="/WEB-INF/facelets/BkaTreeDarstellung.xhtml" />
+		
+		<!-- Sicht -->
+		<ui:include src="/WEB-INF/facelets/Sicht.xhtml"/>
+		 
+		<!-- Bedarfe -->
+		<h:inputHidden id="disableShowOnLoad" value="#{bkaHandler.weitereVerwendungenVisible}"/>
+		<h:form id="bkaBedarfeForm" prependId="false">
+			
+			<c:if test="#{!sichtHandler.isNPSicht()}">
+				<inca:treeTable id="treeTable" handler="#{bedarfeHandler.model.treeTableHandler}" handlerName="treeTableHandler" linking="true"/>
+			</c:if>
+			
+			<c:if test="#{sichtHandler.isNPSicht()}">
+				<inca:npTreeTable id="npTreeTable" handler="#{npBedarfeHandler.model.treeTableHandler}" handlerName="treeTableHandler" linking="true"/>
+			</c:if>
+			
+			<!-- Weitere Verwendungen -->
+			<ui:include src="/WEB-INF/facelets/WeitereVerwendungen.xhtml" />
+			
+			<!-- Kapazitäten -->
+			<div class="kapazitatWrapper">
+				<c:choose>
+					<c:when test="#{kapazitaetHandler.ausbringungAnsicht}">
+						<ui:include src="/WEB-INF/facelets/Ausbringung.xhtml"/>
+					</c:when>
+					<c:otherwise>
+						<ui:include src="/WEB-INF/facelets/Kapazitaet.xhtml"/>
+					</c:otherwise>
+				</c:choose>
+			</div>
+			
+			<!-- ScrollPosition muss über mehrere Seiten gehalten werden, deswegen wird hier die Kompnente nicht verwendet -->
+			<h:inputHidden id="treeTableBereichMitteMitte_ScrollPos2" value="#{bkaHandler.bedarfeScrollPos}"/>
+			<h:inputHidden id="treeTableBereichMitteMitteSerie_ScrollPos2" value="#{bkaHandler.serienbedarfeScrollPos}"/>
+			<h:inputHidden id="treeTableBereichMitteMitteNP_ScrollPos2" value="#{bkaHandler.npBedarfeScrollPos}"/>
+			<h:inputHidden id="weitereVerwTreeTableBereichMitteUnten_ScrollPos2" value="#{bkaHandler.weitereVerwendungenScrollPos}"/>
+			<h:inputHidden id="abgleichBereichRechtsUnten_ScrollPos2" value="#{bkaHandler.abgleichScrollPos}"/>
+			<p:remoteCommand name="updateForm" update="@form" />
+		</h:form>
+		
+		<!-- Abgleich -->
+		<c:choose>
+			<c:when test="#{kapazitaetHandler.ausbringungAnsicht}">
+				<ui:include src="/WEB-INF/facelets/Abgleich_Ausbringung.xhtml"/>
+			</c:when>
+			<c:otherwise>
+				<ui:include src="/WEB-INF/facelets/Abgleich.xhtml"/>
+			</c:otherwise>
+		</c:choose>
+		
+		<!--  Bereich Informationstext nur rendern wenn Systemhinweis vorhanden -->
+		<h:form id="statusBereichForm" rendered="#{not (aktionSichtHandler.selectedBka ==  null)}">
+			<!-- Token. -->	
+			<h:inputHidden value="#{formKeyHandler.key}"/>
+			
+			<h:panelGroup layout="block" id="bereichInformationstext" styleClass="bereichInformationstext">
+			<br />
+				
+				<!-- Status 1001. -->	
+				<h:panelGroup rendered="#{(bkaHandler.model.teileGruppe.bearbeitungStatus.synchronMitVw or bkaHandler.model.teileGruppe.isUBka()) and !kapazitaetHandler.ausbringungAnsicht}">
+					<inca:bkaTrackingTooltip model="#{bkaHandler.model}" />
+				</h:panelGroup>		
+				
+				<!-- Status 1001. Ausbringung	 -->
+				<h:panelGroup rendered="#{(bkaHandler.model.teileGruppe.bearbeitungStatusAusbringung.synchronMitVw or bkaHandler.model.teileGruppe.isUBka()) and kapazitaetHandler.ausbringungAnsicht}">
+					<inca:bkaTrackingTooltip model="#{bkaHandler.model}" />
+				</h:panelGroup>		
+				
+				<!-- Status 1002. -->
+				<h:panelGroup rendered="#{(bkaHandler.model.teileGruppe.bearbeitungStatus.inUeberarbeitung and !bkaHandler.model.teileGruppe.isUBka()) and !kapazitaetHandler.ausbringungAnsicht}">
+					<table class="bereichInformationstextTable">
+						<tr>
+							<td class="col1">
+								<inca:bkaTrackingTooltip model="#{bkaHandler.model}" />
+							</td>
+							<td class="col2" style="float: right; padding-right: 25px;">			
+								<h:panelGroup rendered="#{!benutzerHandler.benutzer.vwMitarbeiter}">
+									<h:commandLink styleClass="actionLink incaButton" action="#{bkaHandler.showBkaFreigabe}" >
+										<h:outputText value="#{i18n.freigabe}" />
+									</h:commandLink>
+								</h:panelGroup>
+							</td>
+						</tr>
+					</table>
+				</h:panelGroup>
+	
+				<!-- Status 1003. -->
+				<h:panelGroup rendered="#{(bkaHandler.model.teileGruppe.bearbeitungStatus.freigegeben and ansprechpartnerHandler.model != null and !bkaHandler.model.teileGruppe.isUBka()) and !kapazitaetHandler.ausbringungAnsicht}" >			
+					<table class="bereichInformationstextTable">
+						<tr>	 				
+							<td class="col1">
+								<inca:bkaTrackingTooltip model="#{bkaHandler.model}" ansprechpartnerModel="#{ansprechpartnerHandler.model}" showEinkaufer="#{benutzerHandler.benutzer.einkaeuferOnly and ansprechpartnerHandler.model.einkaeufer.userID != benutzerHandler.benutzer.userID}"/>
+							</td>
+							<td class="col2" style="float: right; padding-right: 25px;">			
+								<h:panelGroup rendered="#{benutzerHandler.benutzer.rechte.adminOrKapaManager and aktionSichtHandler.isKtInIncaOrHtInAutobkm() or benutzerHandler.benutzer.vwMitarbeiter and ansprechpartnerHandler.model.einkaeufer.userID == benutzerHandler.benutzer.userID and aktionSichtHandler.isKtInIncaOrHtInAutobkm()}">
+									<h:panelGroup layout="block" styleClass="datenUebernahme">
+										<h:graphicImage id="loadingGif" value="/images/loading_tiny.gif" alt="#{i18n.bitte_warten}"/>
+										<h:commandLink id="TgrUebernahmeAkzeptieren" styleClass="actionLink_Show" actionListener="#{bkaHandler.transActionId}" action="#{bkaHandler.execute}" onclick="showLoading();">
+											<h:outputText value="#{i18n.daten_uebernehmen}" />
+										</h:commandLink>
+										<h:commandLink id="TgrAbhaengigkeitenVerarbeiten" styleClass="actionLink_Show" action="#{bkaHandler.showAbhaengigkeiten}" onclick="showLoading();">
+											<h:outputText value="#{i18n.daten_uebernehmen}..." />
+										</h:commandLink>
+										<br/>
+										<h:commandLink id="TgrUebernahmeAblehnen" styleClass="actionLink_Show" actionListener="#{bkaHandler.transActionId}" action="#{bkaHandler.execute}" onclick="showLoading();">
+											<h:outputText value="#{i18n.uebernahme_ablehnen}" />
+										</h:commandLink>
+									</h:panelGroup>
+								</h:panelGroup>
+							</td>
+						</tr>
+					</table>
+				</h:panelGroup>
+	
+				<!-- Status 1004. -->
+				<h:panelGroup rendered="#{(bkaHandler.model.teileGruppe.bearbeitungStatus.uebernahmeAbgelehnt and !bkaHandler.model.teileGruppe.isUBka()) and !kapazitaetHandler.ausbringungAnsicht}">
+					<inca:bkaTrackingTooltip model="#{bkaHandler.model}" />
+				</h:panelGroup>
+				 
+				<!-- Status 1005. -->			
+				<h:panelGroup rendered="#{(bkaHandler.model.teileGruppe.bearbeitungStatus.aktualisierungNotwendig and !bkaHandler.model.teileGruppe.isUBka()) and !kapazitaetHandler.ausbringungAnsicht}">
+					<table class="bereichInformationstextTable">
+						<tr>					
+							<td class="col1">
+								<inca:bkaTrackingTooltip model="#{bkaHandler.model}" rendered="#{aktionSichtHandler.aktualisierungAnfordern and aktionSichtHandler.isKtInIncaOrHtInAutobkm()}" />
+							</td>
+							<td class="col2" style="float: right; padding-right: 25px;">			
+								<h:panelGroup rendered="#{benutzerHandler.benutzer.vwMitarbeiter}">
+									<table class="aktualisierungNotwendigTable" cellspacing="3">
+										<h:panelGroup rendered="#{aktionSichtHandler.aktualisierungAnfordern and aktionSichtHandler.isKtInIncaOrHtInAutobkm()}">
+										<tr>
+											<td>								
+												<h:commandLink id="AktualisierungStornieren" styleClass="actionLink incaButton" actionListener="#{bkaHandler.transActionId}" action="#{bkaHandler.execute}" onclick="showLoading();" >						
+													<h:outputText value="#{i18n.kapazitaetsabgleich_aktualisierung_stornieren}"  styleClass="aktualisierungNotwendigTableText"/>
+												</h:commandLink>
+											</td>
+										</tr>
+										</h:panelGroup>
+										<h:panelGroup rendered="#{!aktionSichtHandler.aktualisierungAnfordern and aktionSichtHandler.falscheSicht and aktionSichtHandler.isKtInIncaOrHtInAutobkm()}">
+										<tr>
+											<td>
+												<h:outputText value="#{i18n.kapazitaetsabgleich_aktualisierung_stornieren}" title="#{i18n.invalid_sicht_tooltip}" styleClass="actionLink_disabled incaButton aktualisierungNotwendigTableText" />								
+											</td>
+										</tr>
+										</h:panelGroup>
+										<h:panelGroup rendered="#{!aktionSichtHandler.aktualisierungAnfordern and !aktionSichtHandler.falscheSicht and aktionSichtHandler.falscheBezugsart and aktionSichtHandler.isKtInIncaOrHtInAutobkm()}">
+										<tr>
+											<td>											
+												<h:outputText value="#{i18n.kapazitaetsabgleich_aktualisierung_stornieren}" title="#{aktionSichtHandler.falscheBezugsartTooltip}" styleClass="actionLink_disabled incaButton aktualisierungNotwendigTableText" />
+											</td>
+										</tr>
+										</h:panelGroup>
+									</table>
+								</h:panelGroup>
+								<h:panelGroup rendered="#{aktionSichtHandler.bestaetigungMoeglichDurchAnwender}">
+									<table class="aktualisierungNotwendigTable" cellspacing="3" width="70%">
+										<tr>
+											<td>
+												<h:commandLink id="AktualitaetBestaetigen" styleClass="actionLink incaButton" actionListener="#{bkaHandler.transActionId}" action="#{bkaHandler.execute}" onclick="showLoading();">
+													<h:outputText value="#{i18n.kapazitaetsabgleich_aktualitaet_bestaetigen}" styleClass="aktualisierungNotwendigTableText"/>
+												</h:commandLink>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<h:commandLink id="StrukturAendern" styleClass="actionLink incaButton" action="#{bkaHandler.showBkaStruktur}" onclick="showLoading();">
+													<h:outputText value="#{i18n.kapazitaetsabgleich_struktur_aendern}" styleClass="aktualisierungNotwendigTableText"/>
+												</h:commandLink>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<h:commandLink id="KapazitaetAendern" styleClass="actionLink incaButton" action="#{kapazitaetHandler.showKapazitaetEingeben}" onclick="showLoading();">
+													<h:outputText value="#{i18n.kapazitaetsabgleich_kapazitaet_aendern}" styleClass="aktualisierungNotwendigTableText"/>
+												</h:commandLink>
+											</td>
+										</tr>
+									</table>
+								</h:panelGroup>
+							</td>
+						</tr>
+					</table>
+				</h:panelGroup>	
+				<!-- Status 1005 Ausbringung -->			
+				<h:panelGroup rendered="#{(bkaHandler.model.teileGruppe.bearbeitungStatusAusbringung.aktualisierungNotwendig and !bkaHandler.model.teileGruppe.isUBka()) and kapazitaetHandler.ausbringungAnsicht and aktionSichtHandler.isKtInIncaOrHtInAutobkm()}">
+					<table class="bereichInformationstextTable">
+						<tr>					
+							<td class="col1">
+								<inca:bkaTrackingTooltip model="#{bkaHandler.model}"/>
+							</td>
+							<td class="col2" style="float: right; padding-right: 25px;" >			
+								<h:panelGroup rendered="#{benutzerHandler.benutzer.vwMitarbeiter}">
+								<table class="aktualisierungNotwendigTable">
+								<h:panelGroup rendered="#{aktionSichtHandler.aktualisierungAnfordern}">
+										<tr>
+											<td>
+												<h:commandLink id="AktualisierungStornierenAusbringung" styleClass="actionLink incaButton" actionListener="#{bkaHandler.transActionId}" action="#{bkaHandler.execute}" onclick="showLoading();" >
+													<h:outputText value="#{i18n.kapazitaetsabgleich_aktualisierung_stornieren}" styleClass="aktualisierungNotwendigTableText"/>
+												</h:commandLink>
+											</td>
+										</tr>
+								</h:panelGroup>
+								<h:panelGroup rendered="#{!aktionSichtHandler.aktualisierungAnfordern and aktionSichtHandler.falscheSicht}">								
+										<tr>
+											<td>
+								   				<h:outputText value="#{i18n.kapazitaetsabgleich_aktualisierung_stornieren}" title="#{i18n.invalid_sicht_tooltip}" styleClass="actionLink_disabled incaButton aktualisierungNotwendigTableText" />								
+											</td>
+										</tr>
+								</h:panelGroup>
+								<h:panelGroup rendered="#{!aktionSichtHandler.aktualisierungAnfordern and !aktionSichtHandler.falscheSicht and aktionSichtHandler.falscheBezugsart and sichtHandler.isInca()}">								
+										<tr>
+											<td>
+												<h:outputText value="#{i18n.kapazitaetsabgleich_aktualisierung_stornieren}" title="#{aktionSichtHandler.falscheBezugsartTooltip}" styleClass="actionLink_disabled incaButton aktualisierungNotwendigTableText" />								
+											</td>
+										</tr>
+								</h:panelGroup>
+								</table>								
+								</h:panelGroup>
+								<h:panelGroup rendered="#{aktionSichtHandler.bestaetigungMoeglichDurchAnwender}">
+									<table class="aktualisierungNotwendigTable">
+										<tr>
+											<td>
+												<h:commandLink id="AktualitaetBestaetigenAusbringung" styleClass="actionLink incaButton" actionListener="#{bkaHandler.transActionId}" action="#{bkaHandler.execute}" onclick="showLoading();">
+													<h:outputText value="#{i18n.kapazitaetsabgleich_aktualitaet_bestaetigen}" styleClass="aktualisierungNotwendigTableText"/>
+												</h:commandLink>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<h:commandLink id="StrukturAendernAusbringung" styleClass="actionLink incaButton" action="#{bkaHandler.showBkaStruktur}" onclick="showLoading();">
+													<h:outputText value="#{i18n.kapazitaetsabgleich_struktur_aendern}" styleClass="aktualisierungNotwendigTableText"/>
+												</h:commandLink>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<h:commandLink id="KapazitaetAendernAusbringung" styleClass="actionLink incaButton" action="#{kapazitaetHandler.showKapazitaetEingeben}" onclick="showLoading();">
+													<h:outputText value="#{i18n.kapazitaetsabgleich_kapazitaet_aendern}" styleClass="aktualisierungNotwendigTableText"/>
+												</h:commandLink>
+											</td>
+										</tr>
+									</table>
+								</h:panelGroup>
+							</td>
+						</tr>
+					</table>
+				</h:panelGroup>				
+			</h:panelGroup>
+		</h:form>
+		
+		<!--  Footer -->
+		<div id="bereichRechtsFooter" class="kapazitaetsabgleichFooter boxFooter">
+			<h:form id="bkaBedarfeFooterForm" prependId="false" rendered="#{not (aktionSichtHandler.selectedBka ==  null)}">
+				
+				<!-- ScrollPosition muss über mehrere Seiten gehalten werden, deswegen wird hier die Kompnente nicht verwendet -->
+				<h:inputHidden id="treeTableBereichMitteMitte_ScrollPos" value="#{bkaHandler.bedarfeScrollPos}"/>
+				<h:inputHidden id="weitereVerwTreeTableBereichMitteUnten_ScrollPos" value="#{bkaHandler.weitereVerwendungenScrollPos}"/>
+				<h:inputHidden id="abgleichBereichRechtsUnten_ScrollPos" value="#{bkaHandler.abgleichScrollPos}"/>
+					
+					<table class="kapazitaetsabgleichFooterTable" cellpadding="0" cellspacing="1" >
+					<!--            -->
+					<!-- 1. Zeile.  -->
+					<!--            -->
+					<tr>
+						<!-- ActionLink zum Umbenennen  -->
+						<td class="col1">
+							<h:panelGroup rendered="#{benutzerHandler.benutzer.rechte.rechtBearbeiten}">
+								<h:commandLink id="umbenennenLink" styleClass="actionLink incaButton" action="#{bkaHandler.showBkaUmbenennen}" rendered="#{aktionSichtHandler.bkaUmbenennen}">
+									<h:outputText value="#{i18n.umbenennen}" title="#{i18n.umbenennen_tooltip}"/>
+								</h:commandLink>
+								<h:outputText value="#{i18n.umbenennen}" title="#{i18n.bka_gesperrt_keine_bearbeitung}" styleClass="actionLink_disabled incaButton" rendered="#{!aktionSichtHandler.bkaUmbenennen and !aktionSichtHandler.falscheSicht and !aktionSichtHandler.falscheBezugsart and aktionSichtHandler.bkaGesperrt}"/>
+								<h:outputText value="#{i18n.umbenennen}" title="#{i18n.invalid_sicht_tooltip}" styleClass="actionLink_disabled incaButton" rendered="#{!aktionSichtHandler.bkaUmbenennen and aktionSichtHandler.falscheSicht}"/>
+								<h:outputText value="#{i18n.umbenennen}" title="#{aktionSichtHandler.falscheBezugsartTooltip}" styleClass="actionLink_disabled incaButton" rendered="#{!aktionSichtHandler.bkaUmbenennen and !aktionSichtHandler.falscheSicht and aktionSichtHandler.falscheBezugsart}"/>
+							</h:panelGroup>
+						</td>	
+						<!-- ActionLink zum Löschen  -->
+						<td class="col2">
+							<h:panelGroup rendered="#{benutzerHandler.benutzer.rechte.rechtBearbeiten}">
+								<h:commandLink id="loeschenLink" styleClass="actionLink incaButton" action="#{bkaHandler.showBkaLoeschen}" onclick="showLoading()" rendered="#{aktionSichtHandler.bkaLoeschen}">
+									<h:outputText value="#{i18n.loeschen}" title="#{i18n.bkaloeschen}" />
+								</h:commandLink>
+								<h:outputText value="#{i18n.loeschen}" title="#{i18n.bka_gesperrt_keine_bearbeitung}" styleClass="actionLink_disabled incaButton" rendered="#{!aktionSichtHandler.bkaLoeschen and !aktionSichtHandler.falscheSicht and !aktionSichtHandler.falscheBezugsart and aktionSichtHandler.bkaGesperrt}"/>
+								<h:outputText value="#{i18n.loeschen}" title="#{i18n.invalid_sicht_tooltip}" styleClass="actionLink_disabled incaButton" rendered="#{!aktionSichtHandler.bkaLoeschen and aktionSichtHandler.falscheSicht}"/>
+								<h:outputText value="#{i18n.loeschen}" title="#{aktionSichtHandler.falscheBezugsartTooltip}" styleClass="actionLink_disabled incaButton" rendered="#{!aktionSichtHandler.bkaLoeschen and !aktionSichtHandler.falscheSicht and aktionSichtHandler.falscheBezugsart}"/>
+							</h:panelGroup>	
+						</td>
+						<!-- ActionLink zur Eingabe der Kapazitäten -->
+						<td class="col3">
+							<h:panelGroup rendered="#{benutzerHandler.benutzer.rechte.rechtBearbeiten}">
+							<!-- Wenn die Ausbringung bereits gepflegt wurde, erscheint kein Popupmenu 
+									und man wird direkt zur Pflegemaske weitergeleitet (je nach Ansicht)-->
+								<h:commandLink id="kapazitaetLink1" styleClass="actionLink incaButton" action="#{kapazitaetHandler.showKapazitaetEingeben}" rendered="#{aktionSichtHandler.bkaKapazitaet and kapazitaetHandler.ausbringungGepflegt and !kapazitaetHandler.tgr.isUBka()}" onclick="showLoading()">
+									<h:outputText value="#{i18n.kapazitaet}" title="#{i18n.kapa_bearbeiten_tooltip}"/>
+								</h:commandLink>
+							<!-- Wenn die Ausbringung nicht gepflegt wurde(und der Benutzer ausbringungsberechtigt ist), erscheint ein Popupmenu,
+									wo man auswählen kann, ob man die Kapazitaet pflegen möchte oder eine Ausbringung erstellen möchte  -->
+								<p:commandLink id="kapazitaetLink2" styleClass="actionLink incaButton" action="#{kapazitaetHandler.setPopupAuswahl('nominierteKapa')}" oncomplete="PF('kapaBearbeitenVar').show();" rendered="#{aktionSichtHandler.bkaKapazitaet and !kapazitaetHandler.ausbringungGepflegt and benutzerHandler.loggedInBenutzer.ausbringungBerechtigt and !kapazitaetHandler.tgr.isUBka()}" >
+									<h:outputText value="#{i18n.kapazitaet}" title="#{i18n.kapa_bearbeiten_tooltip}"/>
+								</p:commandLink>
+							<!-- Wenn die Ausbringung nicht gepflegt wurde und der Benutzer nicht ausbringungsberechtigt ist, erscheint kein Popupmenue 
+									und man wird direkt zur Kapa-ändern Maske weitergeleitet  	-->
+								<h:commandLink id="kapazitaetLink3" styleClass="actionLink incaButton" action="#{kapazitaetHandler.showKapazitaetEingeben}" rendered="#{aktionSichtHandler.bkaKapazitaet and !kapazitaetHandler.ausbringungGepflegt and !benutzerHandler.loggedInBenutzer.ausbringungBerechtigt and !kapazitaetHandler.tgr.isUBka()}" onclick="showLoading()">
+									<h:outputText value="#{i18n.kapazitaet}" title="#{i18n.kapa_bearbeiten_tooltip}"/>
+								</h:commandLink>
+							<!-- Wenn man sich im UBka befindet, wird man direkt zu Pflegemaske für den UBka weiter geleitet -->
+								<h:commandLink id="kapazitaetLink4" styleClass="actionLink incaButton" action="#{kapazitaetHandler.showKapazitaetEingeben}" rendered="#{aktionSichtHandler.bkaKapazitaet and kapazitaetHandler.tgr.isUBka()}" onclick="showLoading()">
+									<h:outputText value="#{i18n.kapazitaet}" title="#{i18n.kapa_bearbeiten_tooltip}"/>
+								</h:commandLink>
+								<h:outputText value="#{i18n.kapazitaet}" title="#{aktionSichtHandler.falscheBezugsartTooltip}" styleClass="actionLink_disabled incaButton" rendered="#{!aktionSichtHandler.bkaKapazitaet}"/>
+							</h:panelGroup>
+						</td>
+						<!-- ActionLink zur Anzeige der Kapazitätshistorie -->
+						<td class="col4">	
+						<h:panelGroup>
+							<h:commandLink id="kapaHistorieLink" styleClass="actionLink incaButton" action="#{kapazitaetHandler.showKapazitaetsHistorie}" onclick="showLoading()" rendered="#{!kapazitaetHandler.ausbringungAnsicht}">
+								<h:outputText value="#{i18n.kapazitaetshistorie}" title="#{i18n.kapazitaetshistorie}"/>
+							</h:commandLink>
+							<h:outputText value="#{i18n.kapazitaetshistorie}" title="#{i18n.invalid_sicht_tooltip}" styleClass="actionLink_disabled incaButton" rendered="#{kapazitaetHandler.ausbringungAnsicht}"/>	
+							</h:panelGroup>
+						</td>
+						<!-- ActionLink zur Strukturänderung -->
+						<td class="col5">	
+							<h:panelGroup rendered="#{benutzerHandler.benutzer.rechte.rechtBearbeiten}">
+								<h:commandLink id="teileLink" styleClass="actionLink incaButton" action="#{bkaHandler.showBkaStruktur}" onclick="showLoading()" rendered="#{aktionSichtHandler.strukturAendern}">
+									<h:outputText value="#{i18n.kapazitaetsabgleich_struktur_aendern}" title="#{i18n.struktur_aendern_tooltip}"/>
+								</h:commandLink>
+								<h:outputText value="#{i18n.kapazitaetsabgleich_struktur_aendern}" title="#{i18n.bka_gesperrt_keine_bearbeitung}" styleClass="actionLink_disabled incaButton" rendered="#{!aktionSichtHandler.strukturAendern and !aktionSichtHandler.falscheSicht and !aktionSichtHandler.falscheBezugsart and aktionSichtHandler.bkaGesperrt}"/>
+								<h:outputText value="#{i18n.kapazitaetsabgleich_struktur_aendern}" title="#{i18n.invalid_sicht_tooltip}" styleClass="actionLink_disabled incaButton" rendered="#{!aktionSichtHandler.strukturAendern and aktionSichtHandler.falscheSicht}"/>
+								<h:outputText value="#{i18n.kapazitaetsabgleich_struktur_aendern}" title="#{aktionSichtHandler.falscheBezugsartTooltip}" styleClass="actionLink_disabled incaButton" rendered="#{!aktionSichtHandler.strukturAendern and !aktionSichtHandler.falscheSicht and aktionSichtHandler.falscheBezugsart}"/>
+								<h:outputText value="#{i18n.kapazitaetsabgleich_struktur_aendern}" title="#{i18n.unterrestriktion_struktur_aendern_nicht_moeglich_g}" styleClass="actionLink_disabled incaButton" rendered="#{!aktionSichtHandler.strukturAendern and !aktionSichtHandler.falscheSicht and !aktionSichtHandler.falscheBezugsart and !aktionSichtHandler.bkaGesperrt and aktionSichtHandler.selectedBka.isGesamtBka()}"/>
+								<h:outputText value="#{i18n.kapazitaetsabgleich_struktur_aendern}" title="#{i18n.unterrestriktion_struktur_aendern_nicht_moeglich_u}" styleClass="actionLink_disabled incaButton" rendered="#{!aktionSichtHandler.strukturAendern and !aktionSichtHandler.falscheSicht and !aktionSichtHandler.falscheBezugsart and !aktionSichtHandler.bkaGesperrt and aktionSichtHandler.selectedBka.isUBka()}"/>
+							</h:panelGroup>
+						</td>
+						<!-- ActionLink zur Datenaktualisierung -->				
+						<td class="col6" colspan="2">
+							<h:panelGroup rendered="#{benutzerHandler.benutzer.vwMitarbeiter and !benutzerHandler.benutzer.rechte.keineRechte}">
+								<h:commandLink id="datenaktualisierungLink" styleClass="actionLink incaButton" action="#{bkaHandler.showDatenaktualisierung}" onclick="showLoading();" rendered="#{bkaHandler.anforderungMoeglich and aktionSichtHandler.aktualisierungAnfordern and !aktionSichtHandler.selectedBka.isUBka()}" >
+									<h:outputText value="#{i18n.kapazitaetsabgleich_aktualisierung_anfordern}" title="#{i18n.kapazitaetsabgliech_aktualisierung_tooltip_moeglich}"/>
+								</h:commandLink>
+								<h:panelGroup rendered="#{not benutzerHandler.loggedInBenutzer.ausbringungBerechtigt}">							
+									<h:outputText value="#{i18n.kapazitaetsabgleich_aktualisierung_anfordern}" title="#{i18n.kapazitaetsabgliech_aktualisierung_tooltip_unmoeglich}" styleClass="actionLink_disabled incaButton" rendered="#{!bkaHandler.anforderungMoeglich and !bkaHandler.model.teileGruppe.bearbeitungStatus.aktualisierungNotwendig and aktionSichtHandler.aktualisierungAnfordern and !aktionSichtHandler.selectedBka.isUBka()}"/>
+									<h:outputText value="#{i18n.kapazitaetsabgleich_aktualisierung_anfordern}" title="#{i18n.kapazitaetsabgliech_aktualisierung_tooltip_vorhanden}" styleClass="actionLink_disabled incaButton" rendered="#{!bkaHandler.anforderungMoeglich and bkaHandler.model.teileGruppe.bearbeitungStatus.aktualisierungNotwendig and aktionSichtHandler.aktualisierungAnfordern and !aktionSichtHandler.selectedBka.isUBka()}"/>
+									<h:outputText value="#{i18n.kapazitaetsabgleich_aktualisierung_anfordern}" title="#{i18n.invalid_sicht_tooltip}" styleClass="actionLink_disabled incaButton" rendered="#{((!aktionSichtHandler.aktualisierungAnfordern and aktionSichtHandler.falscheSicht) or sichtHandler.lieferantSicht) and !sichtHandler.autobkm and !aktionSichtHandler.selectedBka.isUBka()}"/>
+									<h:outputText value="#{i18n.kapazitaetsabgleich_aktualisierung_anfordern}" title="#{aktionSichtHandler.falscheBezugsartTooltip}" styleClass="actionLink_disabled incaButton" rendered="#{!aktionSichtHandler.aktualisierungAnfordern and !aktionSichtHandler.falscheSicht and aktionSichtHandler.falscheBezugsart and sichtHandler.inca and !aktionSichtHandler.selectedBka.isUBka()}"/>
+									<h:outputText value="#{i18n.kapazitaetsabgleich_aktualisierung_anfordern}" title="#{i18n.kapazitaetsabgliech_aktualisierung_tooltip_autobkm}" styleClass="actionLink_disabled incaButton" rendered="#{sichtHandler.autobkm  or aktionSichtHandler.selectedBka.isUBka()}"/>
+								</h:panelGroup>
+							
+								<h:panelGroup rendered="#{benutzerHandler.loggedInBenutzer.ausbringungBerechtigt}">
+									<h:outputText value="#{i18n.kapazitaetsabgleich_aktualisierung_anfordern}" title="#{i18n.kapazitaetsabgliech_aktualisierung_tooltip_unmoeglich}" styleClass="actionLink_disabled incaButton" rendered="#{!bkaHandler.anforderungMoeglich and !bkaHandler.model.teileGruppe.bearbeitungStatus.aktualisierungNotwendig and aktionSichtHandler.aktualisierungAnfordern and !aktionSichtHandler.selectedBka.isUBka()}"/>
+									<h:outputText value="#{i18n.kapazitaetsabgleich_aktualisierung_anfordern}" title="#{i18n.kapazitaetsabgliech_aktualisierung_tooltip_vorhanden}" styleClass="actionLink_disabled incaButton" rendered="#{!bkaHandler.anforderungMoeglich and bkaHandler.model.teileGruppe.bearbeitungStatus.aktualisierungNotwendig and aktionSichtHandler.aktualisierungAnfordern and !aktionSichtHandler.selectedBka.isUBka()}"/>
+									<h:outputText value="#{i18n.kapazitaetsabgleich_aktualisierung_anfordern}" title="#{i18n.invalid_sicht_tooltip}" styleClass="actionLink_disabled incaButton" rendered="#{((!aktionSichtHandler.aktualisierungAnfordern and aktionSichtHandler.falscheSicht) or sichtHandler.lieferantSicht) and !aktionSichtHandler.selectedBka.isUBka()}"/>
+									<h:outputText value="#{i18n.kapazitaetsabgleich_aktualisierung_anfordern}" title="#{aktionSichtHandler.falscheBezugsartTooltip}" styleClass="actionLink_disabled incaButton" rendered="#{!aktionSichtHandler.aktualisierungAnfordern and !aktionSichtHandler.falscheSicht and aktionSichtHandler.falscheBezugsart and !aktionSichtHandler.selectedBka.isUBka()}"/>
+									<h:outputText value="#{i18n.kapazitaetsabgleich_aktualisierung_anfordern}" title="#{i18n.kapazitaetsabgliech_aktualisierung_tooltip_autobkm}" styleClass="actionLink_disabled incaButton" rendered="#{aktionSichtHandler.selectedBka.isUBka()}"/>
+								</h:panelGroup>
+							</h:panelGroup>
+						</td>
+						<!--  Vor/Zurück Navigation -->
+						<td class="col7" align="right">
+							<h:panelGroup rendered="#{sucheHandler.isSuchergebnis and !benutzerHandler.lieferant}">
+									<h:commandLink styleClass="actionLink actionLink_zurueck" action="#{sucheHandler.showPreviousBKA}" rendered="#{sucheHandler.hasPrevious and sichtHandler.isAutobkm() and !bkaHandler.weitereVerwendung}">
+										<f:ajax render="@all" />
+										<h:outputText value="#{i18n.bka_zurueck_prev}" title="#{i18n.bka_zurueck_prev}" />
+									</h:commandLink>	
+									<h:outputText value="#{i18n.bka_zurueck_prev}" title="#{i18n.invalid_sicht_tooltip}" rendered="#{!sucheHandler.hasPrevious or !sichtHandler.isAutobkm() or bkaHandler.weitereVerwendung}" styleClass="actionLink_disabled actionLink_zurueck"/>
+									<h:outputText value=" | " />
+									<h:commandLink styleClass="actionLink actionLink_vor" action="#{sucheHandler.showNextBKA}" rendered="#{sucheHandler.hasNext and sichtHandler.isAutobkm()and !bkaHandler.weitereVerwendung}">
+										<f:ajax render="@all" />
+										<h:outputText value="#{i18n.bka_vor}" title="#{i18n.bka_vor}" />
+									</h:commandLink>
+									<h:outputText value="#{i18n.bka_vor}" title="#{i18n.invalid_sicht_tooltip}" rendered="#{!sucheHandler.hasNext or !sichtHandler.isAutobkm() or bkaHandler.weitereVerwendung}" styleClass="actionLink_disabled actionLink_vor"/>	
+							</h:panelGroup>
+							<h:panelGroup rendered="#{!sucheHandler.isSuchergebnis and !benutzerHandler.lieferant}">
+									<h:commandLink  styleClass="actionLink actionLink_zurueck" action="#{arbeitsvorratHandler.showPreviousBKA}" rendered="#{arbeitsvorratHandler.hasPrevious and sichtHandler.isAutobkm() and !bkaHandler.weitereVerwendung}">
+										<f:ajax render="@all" />
+										<h:outputText value="#{i18n.bka_zurueck_prev}" title="#{i18n.bka_zurueck_prev}" />
+									</h:commandLink>	
+									<h:outputText value="#{i18n.bka_zurueck_prev}" title="#{i18n.invalid_sicht_tooltip}" rendered="#{!arbeitsvorratHandler.hasPrevious or !sichtHandler.isAutobkm() or bkaHandler.weitereVerwendung}" styleClass="actionLink_disabled actionLink_zurueck"/>
+									<h:outputText value=" &#124; " />
+									<h:commandLink  styleClass="actionLink actionLink_vor" action="#{arbeitsvorratHandler.showNextBKA}" rendered="#{arbeitsvorratHandler.hasNext and sichtHandler.isAutobkm() and !bkaHandler.weitereVerwendung}">
+										<f:ajax render="@all" />
+										<h:outputText value="#{i18n.bka_vor}" title="#{i18n.bka_vor}" />
+									</h:commandLink>
+									<h:outputText value="#{i18n.bka_vor}" title="#{i18n.invalid_sicht_tooltip}" rendered="#{!arbeitsvorratHandler.hasNext or !sichtHandler.isAutobkm() or bkaHandler.weitereVerwendung}" styleClass="actionLink_disabled actionLink_vor"/>	
+							</h:panelGroup>
+						</td>
+					</tr>
+					<!--            -->
+					<!-- 2. Zeile.  -->
+					<!--            -->
+					<tr>
+						<!-- ActionLink zum Anzeigeoptionen-Fenster -->
+						<td class="col1">	
+							<h:commandLink id="anzeigeOptionenLink" styleClass="actionLink incaButton" actionListener="#{anzeigeOptionenHandler.showAnzeigeOptionenBox}" rendered="#{!sichtHandler.isNPSicht()}">
+								<h:outputText value="#{i18n.anzeige}" title="#{i18n.anzeige_tooltip}"/>
+							</h:commandLink>
+							<h:outputText value="#{i18n.anzeige}" title="#{i18n.anzeige_tooltip_disabled}" styleClass="actionLink_disabled incaButton" rendered="#{sichtHandler.isNPSicht()}"/>
+						</td>
+						<!-- ActionLink für den Excelexport -->
+						<td class="col2">	
+							<h:commandLink id="excelLink" styleClass="actionLink incaButton" actionListener="#{bkaHandler.showBkaExcelExport}" action="#{szenarioHandler.vergleichSzenarioModel.useKTBAsDefault}"
+										   rendered="#{!sichtHandler.isNPSicht()}">
+								<h:outputText value="#{i18n.export}" title="#{i18n.excelexport_tooltip}"/>
+							</h:commandLink>
+							<h:commandLink id="excelLinkNp" styleClass="actionLink incaButton" actionListener="#{bkaHandler.startExcelExportNp}"
+										   rendered="#{sichtHandler.isNPSicht()}" >
+								<h:outputText value="#{i18n.export}" title="#{i18n.excelexport_tooltip_np}"/>
+							</h:commandLink>
+						</td>
+						<!-- ActionLink um zur Bedarfssicht zu navigieren -->
+						<td class="col3">
+							<h:commandLink id="bedarfLink" styleClass="actionLink incaButton" action="goto_bedarfe" onclick="showLoading()" rendered="#{aktionSichtHandler.bedarfmaske}">
+								<h:outputText value="#{i18n.kapazitaetsabgleich_bedarfsmaske}" title="#{i18n.sprung_bedarfsmaske}"/>
+							</h:commandLink>
+							<h:outputText value="#{i18n.kapazitaetsabgleich_bedarfsmaske}" title="#{i18n.invalid_sicht_tooltip}" styleClass="actionLink_disabled incaButton" rendered="#{!aktionSichtHandler.bedarfmaske}"/>
+						</td>
+						<!-- ActionLink zum Ansprechpartner-Fenster -->
+						<td class="col4">
+							<h:commandLink id="ansprechpartnerLink" styleClass="actionLink incaButton" action="#{bkaHandler.showAnsprechpartner}" onclick="showLoading();">
+								<h:outputText value="#{i18n.ansprechpartner}" title="#{i18n.ansprechpartner_anzeigen}"/>
+							</h:commandLink>
+						</td>
+						<!-- ActionLink zum Aufruf der Bedarfsmaske KbM -->
+						<td class="col5">
+							<h:commandLink styleClass="actionLink incaButton" onclick="return switchToKbM();" rendered="#{aktionSichtHandler.bedarfmaskeKbm and !benutzerHandler.lieferant and aktionSichtHandler.serieBedarfVorhanden}" >
+								<h:outputText value="#{i18n.kapazitaetsabgleich_bedarfsmaske_kbm}" title="#{i18n.sprung_kbm_bedarfsansicht}"/>
+							</h:commandLink>
+							<h:outputText rendered="#{aktionSichtHandler.bedarfmaskeKbm and !benutzerHandler.lieferant and !aktionSichtHandler.serieBedarfVorhanden}" value="#{i18n.kapazitaetsabgleich_bedarfsmaske_kbm}" title="#{i18n.invalid_sicht_tooltip}" styleClass="actionLink_disabled incaButton"/>
+							<h:outputText rendered="#{!aktionSichtHandler.bedarfmaskeKbm and !benutzerHandler.lieferant}" value="#{i18n.kapazitaetsabgleich_bedarfsmaske_kbm}" title="#{i18n.invalid_sicht_tooltip}" styleClass="actionLink_disabled incaButton"/>
+						</td>	
+						<!-- ActionLink zum Aufruf des Feintuning -->
+						<td class="col6">
+							<h:panelGroup rendered="#{benutzerHandler.benutzer.vwMitarbeiter and !benutzerHandler.benutzer.rechte.keineRechte and !sichtHandler.NPSicht}">
+								<h:commandLink id="feintuningLink" rendered="#{bedarfeHandler.feintuningStatusAvailable and aktionSichtHandler.korrekturLiefbz}" styleClass="actionLink incaButton" action="#{feintuningHandler.showAnzeigeFeintuning}" onclick="showLoading();">
+									<h:outputText value="#{i18n.feintuning_korrektur_lief_bz}" title="#{i18n.korrektur_liefbz_tooltip}"/>
+								</h:commandLink>
+								<h:outputText rendered="#{!bedarfeHandler.feintuningStatusAvailable and aktionSichtHandler.korrekturLiefbz}" value="#{i18n.feintuning_korrektur_lief_bz}" title="#{i18n.invalid_sicht_tooltip}" styleClass="actionLink_disabled incaButton"/>
+								<h:outputText rendered="#{!aktionSichtHandler.korrekturLiefbz}" value="#{i18n.feintuning_korrektur_lief_bz}" title="#{i18n.invalid_sicht_tooltip}" styleClass="actionLink_disabled incaButton"/>
+							</h:panelGroup>
+							<h:panelGroup rendered="#{benutzerHandler.benutzer.vwMitarbeiter and !benutzerHandler.benutzer.rechte.keineRechte and sichtHandler.NPSicht}">
+								<h:commandLink id="npFeintuningLink" styleClass="actionLink incaButton" action="#{feintuningNpHandler.showAnzeigeFeintuningNp}" onclick="showLoading();">
+									<h:outputText value="#{i18n.feintuning_korrektur_lief_bz_np}" title="#{i18n.korrektur_liefbz_tooltip}"/>
+								</h:commandLink>
+							</h:panelGroup>
+						</td>	
+					</tr>
+					<!--            -->
+					<!-- 3. Zeile.  -->
+					<!--            -->
+					<tr>
+						<!-- ActionLink zum PRN-BKA Übersetzen -->
+						<td class="col1"> 
+<!-- 							<h:commandLink rendered="#{prnBkaHandler.uebersetzenAktiv}" styleClass="actionLink incaButton" action="#{prnBkaHandler.actionTgrUebersetzen}">   -->
+						
+							<h:commandLink rendered="#{einsteigHandler.autobkm and sichtHandler.autobkmSicht and prnBkaHandler.uebersetzenAktiv}" styleClass="actionLink incaButton" actionListener="#{uebersetzenAuswahlHandler.showUebersetzenAuswahlBox}">
+								<h:outputText value="#{i18n.uebersetzen}" title="#{i18n.uebersetzen_tooltip}"/>
+						 	</h:commandLink>
+ 						 	<h:outputText rendered="#{einsteigHandler.autobkm and sichtHandler.autobkmSicht and !prnBkaHandler.uebersetzenAktiv}" value="#{i18n.uebersetzen}" title="#{i18n.uebersetzen}" styleClass="actionLink_disabled incaButton"/>
+						</td>
+						<!-- ActionLink zum Erstellen eines Unterrestriktion-BKAs -->
+						<td class="col2" colspan="1">
+							<h:panelGroup rendered="#{!benutzerHandler.benutzer.rechte.INCAViewerRolleOnly}">
+								<h:commandLink id="neuerUBka" rendered="#{bkaHandler.unterrestriktionPossible}" styleClass="actionLink incaButton" action="#{neuerBkaHandler.neueUnterrestriktionErstellenNavigation}">
+									<h:outputText value="#{i18n.unterrestriktion_erstellen}" title="#{i18n.unterrestriktion_erstellen}"/>
+									<f:setPropertyActionListener value="false" target="#{kapazitaetHandler.neueAusbringung}"></f:setPropertyActionListener>
+									<f:setPropertyActionListener value="true" target="#{kapazitaetHandler.neueUnterrestriktion}"></f:setPropertyActionListener>
+								</h:commandLink>
+								<h:outputText rendered="#{!bkaHandler.unterrestriktionPossible}" value="#{i18n.unterrestriktion_erstellen}" title="#{bkaHandler.unterrestriktionTooltip}" styleClass="actionLink_disabled incaButton"/>
+							</h:panelGroup>
+						</td>
+						<!--  ActionLink fuer das Zeitleistenshifting -->
+						<td class="col3">	
+							<h:panelGroup rendered="#{benutzerHandler.benutzer.zlsBerechtigt and !bkaHandler.selectedBka.isUBka() and !sichtHandler.isNPSicht()}">
+								<h:commandLink id="zeitleistenShiftingLink" value="#{i18n.zeitleistenshifting}" title="#{i18n.zeitleistenshifting}"
+											styleClass="actionLink incaButton" global="false" action="#{zeitleistenShiftingHandler.showAnzeigeZlsDialog}" onclick="showLoading();">
+								</h:commandLink>
+							</h:panelGroup>
+						</td>		
+						<!-- Platzhalter ueber mehrere Spalten, damit der Schliessen-Button richtig sitzt  | col4 weil col2 doppelten Platz beansprucht-->
+						<td class="col4" colspan="4">
+						</td>
+						<!-- ActionLink zum Schließen des Kapazitätsabgleichs -->
+						<td class="col7" align="right">
+							<h:commandLink id="closeLink" styleClass="actionLink incaButton" action="#{bkaHandler.closeBkaAnsicht}" onclick="showLoading()">
+								<h:outputText value="#{i18n.schliessen}" title="#{i18n.schliessen_tooltip}"/>
+							</h:commandLink>
+						</td>
+					</tr>
+				</table>
+			</h:form>
+		</div>
+	</div>
+	
+	<h:panelGroup rendered="#{benutzerHandler.benutzer.vwMitarbeiter}">
+		<inca:openKbm 
+			benutzer="#{benutzerHandler.benutzer}" 
+			model="#{bedarfeHandler.model}"
+			startZeit="#{anzeigeOptionenHandler.startZeit}"
+			endZeit="#{anzeigeOptionenHandler.endZeit}"
+			szenario="#{szenarioHandler.selectedSzenario}"	 
+		/>
+	</h:panelGroup>
+	
+	<h:panelGroup rendered="#{bkaHandler.exportAvailable}">
+		<h:form id="exportForm" prependId="false">
+			<h:commandButton action="#{bkaHandler.doExport}" value="export" id="exportButton" />	
+			<script type="text/javascript">
+				window.onload = function() {
+					var exportButton = document.getElementById('exportButton');
+					if(exportButton != null) {
+						exportButton.click();
+						exportButton.disabled = true;
+						exportButton.style.display = "none";
+					}
+				};
+			</script>
+		</h:form>
+	</h:panelGroup>
+	
+	<!--                               -->
+	<!--  Popup "Kapazität bearbeiten" -->
+	<!--                               -->
+	<h:form>
+		<p:dialog widgetVar="kapaBearbeitenVar" modal="true" styleClass="dialog-no-close-x kapaBearbeitenHeader" resizable="false"
+			header="#{i18n.kapazitaet_bearbeiten}" width="250" required="true" onShow="setRadioDefault();">
+			<p:selectOneRadio layout="grid" styleClass="actionLink_RadioButton" columns="1" plain="true" value="#{kapazitaetHandler.popupAuswahl}">
+				<f:selectItem itemLabel="#{i18n.nominierte_kapazitaet_bearbeiten}" itemValue="nominierteKapa" />
+				<f:selectItem itemLabel="#{i18n.ausbringung_pflegen}" itemValue="neueAusbringung" />
+			</p:selectOneRadio>
+			<div style="float:right; margin-top:12px;" >
+				<p:commandLink styleClass="actionLink incaButton" onclick="PF('kapaBearbeitenVar').hide(); return false;" style="margin-right:8px">
+					<h:outputText value="#{i18n.abbrechen}" />
+				</p:commandLink>
+				<h:commandLink styleClass="actionLink incaButton" action="#{kapazitaetHandler.uebernehmenAction()}" onclick="showLoading();">
+					<h:outputText value="#{i18n.uebernehmen}" />
+				</h:commandLink>
+			</div>
+		</p:dialog>
+	</h:form>
+
+<script type="text/javascript">
+function setRadioDefault(){
+	var radioButtons = $('input[type="radio"]');
+	radioButtons[0].checked = true;
+	radioButtons[1].checked = false;
+}
+
+	var anzahlAbhaengigkeitenJson = "#{bkaHandler.anzahlAbhaengigkeitenJson}";
+	
+	function update(anzahl) {
+		jQuery("#statusBereichForm\\:loadingGif").remove();
+		
+		if (anzahl == 0) {
+			jQuery("#statusBereichForm\\:TgrUebernahmeAkzeptieren").addClass("actionLink incaButton").removeClass("actionLink_Show");
+		} else {
+			jQuery("#statusBereichForm\\:TgrAbhaengigkeitenVerarbeiten").addClass("actionLink incaButton").removeClass("actionLink_Show");
+		}
+		
+		jQuery("#statusBereichForm\\:TgrUebernahmeAblehnen").addClass("actionLink incaButton").removeClass("actionLink_Show");
+	}
+	
+	function loadAnzahlAbhaengigkeiten() {
+		if (stringUtils.startsWith(anzahlAbhaengigkeitenJson, "null")) {
+			var jsonUrl = "#{facesContext.externalContext.requestContextPath}";
+			jsonUrl += "/pages/Abhaengigkeiten.json";
+			jQuery.getJSON(jsonUrl, update);
+		} else {
+			var jsonObject = jQuery.parseJSON(anzahlAbhaengigkeitenJson);
+			update(jsonObject);
+		}
+	}
+	
+	 var resizeTimer;
+	
+	jQuery(window).resize(function() {
+		clearTimeout(resizeTimer);
+		resizeTimer = setTimeout(function(){designKapaAbgleich(); resizeAbgleich();}, 100);
+	});
+	
+	function showTabellenteilTooltip(e1, id) {
+		var posx = 0;
+		var posy = 0;
+
+		var frameXStr = document.getElementById("kapazitaetsabgleichBody").style.left;
+		var frameYStr = document.getElementById("kapazitaetsabgleichBody").style.top;
+
+		var frameX = frameXStr.substring(0, frameXStr.length - 2);
+		var frameY = frameYStr.substring(0, frameYStr.length - 2);
+
+		var evt = e1 || window.event;
+		if (evt.pageX || evt.pageY) {
+			posx = evt.pageX;
+			posy = evt.pageY;
+		} else if (evt.clientX || evt.clientY) {
+			posx = evt.clientX + document.body.scrollLeft
+					+ document.documentElement.scrollLeft;
+			posy = evt.clientY + document.body.scrollTop
+					+ document.documentElement.scrollTop;
+		}
+		posy -= frameY;
+		posx -= frameX;
+
+		document.getElementById(id).style.top = posy + "px";
+		document.getElementById(id).style.left = posx + "px";
+		document.getElementById(id).style.display = "block";
+	}
+	
+	function hideTabellenteilTooltip(id) {
+		document.getElementById(id).style.display = "none";
+	}
+
+	var multiLineTooltip = new MultiLineTooltip();
+	
+	function loadWeitereVerwendungen(){
+		var weitereVerwendungenVisible = document.getElementById("weitereVerwendungenVisible").value;
+		if(weitereVerwendungenVisible=="true"){
+			updateWeitereVerwendungenRC();
+		}		
+	}
+	
+	function switchToKbM(){
+	    if(document.getElementsByClassName('zvtext').length > 0){
+	        PF('switchToKbmLayer').show();
+	    } else {
+	        openKbm();
+	    }
+	    return false;
+	}
+	
+	jQuery(document).ready(function() {
+		setTimeout(loadAnzahlAbhaengigkeiten, 0);
+		
+		// MultiLineTooltip initialisieren.
+		multiLineTooltip.init();
+		
+		// ScrollPositions laden
+		loadScrollPositions();
+		
+		// Maske nach Fenstergroesse umbauen
+		setTimeout(function(){designKapaAbgleich(); resizeAbgleich();}, 250);
+		
+		// WeitereVerwendungen asynchron laden
+		setTimeout(loadWeitereVerwendungen, 250);
+	});
+
+</script>
+<!-- ##################################### -->
+<!-- Layer Anzeige veralteter Daten        -->
+<!-- ##################################### -->
+
+<h:form id="datensichtInvalidLayerForm" prependId="false">
+	<p:dialog widgetVar="invalidLayer"
+		header="#{i18n.datensicht_invalid_text}" resizable="false"
+		modal="false" draggable="false">
+		<p:ajax event="close"
+			listener="#{bkaHandler.handlerDatensichtHelper.actionDatensichtIngnoreChanged}"/>
+		<h:panelGrid columns="3">
+			<h:outputText value=" #{i18n.datensicht_invalid_klicken_1} " />
+			<p:commandLink id="invalidBoxAnwenden" ajax="false"
+				styleClass="actionLink_Add textLink"
+				style="margin-left:2px; margin-right:2px;"
+				action="#{bkaHandler.actionDatensichtAnwenden}"
+				>
+				<h:outputText value="#{i18n.datensicht_button_anwenden}" />
+			</p:commandLink>
+			<h:outputText value=" #{i18n.datensicht_invalid_klicken_2}" />
+		</h:panelGrid>
+	</p:dialog>
+</h:form>
+<h:panelGroup id="invalidLayerJavascript">
+<!-- Wenn der Inhalt der Seite verändert wird, muss sie aktualisiert werden -->
+<inca:rendered rendered="#{bkaHandler.handlerDatensichtHelper.handlerDatensichtOutOfDate and !bkaHandler.handlerDatensichtHelper.ignoreHandlerDatensichtChanged}">
+	<script type="text/javascript">
+	jQuery(document).ready(function() {
+			PF('invalidLayer').show();		
+	});
+	</script>
+</inca:rendered>
+<inca:rendered rendered="#{!bkaHandler.handlerDatensichtHelper.handlerDatensichtOutOfDate or bkaHandler.handlerDatensichtHelper.ignoreHandlerDatensichtChanged}">
+	<script type="text/javascript">
+	jQuery(document).ready(function() {
+			PF('invalidLayer').hide();		
+	});
+	</script>
+</inca:rendered>
+</h:panelGroup>
+
+<!-- Hinweisdialog bei Aufruf der KbM-Sicht aus einem geshifteten BKA heraus -->
+<p:dialog id="switchSichtLayer" widgetVar="switchToKbmLayer" resizable="false" modal="true" draggable="false" width="404px" header="#{i18n.hinweis}">
+	<h:panelGroup style="font-weight:bold">
+		<h:outputText value="#{i18n.hinweis_kbm_zlshifting}" />
+	</h:panelGroup>
+	<h:form>
+		<h:commandLink styleClass="actionLink incaButton kbmZlShifting" onclick="PF('switchToKbmLayer').hide(); openKbm(); return false;">
+			<h:outputText value="#{i18n.ok}" />
+		</h:commandLink>
+	</h:form>
+</p:dialog>
+
+</ui:define>
+
+<ui:define name="footer"></ui:define>
+
+</ui:composition>
+
+<!-- 
+	Alles was unterhalb des ui:composition Tags angegeben ist
+	wird ignoriert.
+ -->
+
+</h:body>
+</html>
