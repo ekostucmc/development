@@ -24,16 +24,8 @@ import vwg.vw.inca.util.ManagedBeanProvider;
 
 /**
  * <p>
- * Handler-Implementierung fuer die Auswahl von Lieferanten.
- * </p>
- *
- * <p>
- * All Rights reserved <br />
- * Copyright Volkswagen AG &#169;2006
- * </p>
- *
- * @author equanth, Auel EDV-Beratung GmbH
- * @since 09.11.2011
+ * Handler-Implementierung fuer die Auswahl von Lieferanten
+ * 
  */
 public class LieferantAuswahlHandler extends AbstractAuswahlHandler<LieferantAuswahlModel> {
 
